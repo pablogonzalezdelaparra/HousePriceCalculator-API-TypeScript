@@ -1,8 +1,11 @@
-import Server from "./providers/Server";
 import express from 'express';
 import cors from 'cors';
-import UserController from "./controllers/UserController";
+import UserController from "./controllers/RecaudacionController";
 import AuthenticationController from "./controllers/AuthenticationController";
+import Server from "./providers/Server";
+import {MONGODB_URI} from "./config";
+import RecaudacionController from './controllers/RecaudacionController';
+
 
 const servidor = new Server({
     port:8080,
@@ -13,9 +16,13 @@ const servidor = new Server({
     ],
     controllers:[
         UserController.getInstance(),
-        AuthenticationController.getInstance()
+        AuthenticationController.getInstance(),
+        RecaudacionController.getInstance()
     ],
-    env:'development'
+    env:'development',
+    mongoUri: MONGODB_URI,
+
+
 });
 
 declare global{
@@ -26,5 +33,7 @@ declare global{
         }
     }
 }
+
+servidor.connect();
 
 servidor.init();
