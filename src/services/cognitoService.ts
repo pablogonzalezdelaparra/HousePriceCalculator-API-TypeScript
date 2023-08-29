@@ -53,7 +53,7 @@ class CognitoService {
   //Autenticación
   public async signInUser(email: string, password: string) {
     const params = {
-      AuthFlow: "USER_PASSWORD_AUTH", // AuthFlow es como vamos a entrar e interactuar con la plataforma de cognito
+      AuthFlow: "USER_PASSWORD_AUTH",
       ClientId: this.clientId,
       AuthParameters: {
         USERNAME: email,

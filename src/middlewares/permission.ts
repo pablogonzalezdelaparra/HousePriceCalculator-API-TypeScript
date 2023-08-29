@@ -15,29 +15,28 @@ export default class PermissionMiddleware {
   }
 
   /**
-   * Verify that the current user is an Supervisor
+   * Verify that the current user is an Admin
    */
-  public async checkIsCreador(
+  public async checkIsAdmin(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
-      const customer: HydratedDocument<IUser> | null = await UserModel.findOne({
+      const user: HydratedDocument<IUser> | null = await UserModel.findOne({
         awsCognito: req.user,
       });
 
-      if (!customer) {
+      if (!user) {
         throw "Failed to find user";
       }
 
-      if (customer.role === UserRoles.CREATOR) {
-        console.log("Es creador");
+      if (user.role === UserRoles.ADMIN) {
         next();
       } else {
         res.status(401).send({
-          code: "UserNotSupervisorException",
-          message: "The logged account is not a supervisor",
+          code: "UserNotAdminException",
+          message: "The logged account is not an admin",
         });
       }
     } catch (error: any) {

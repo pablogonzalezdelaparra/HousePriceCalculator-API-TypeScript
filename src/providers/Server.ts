@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import AbstractController from "../controllers/AbstractController";
 // import db from '../models';
 import mongoose from "mongoose";
@@ -56,13 +56,9 @@ class Server {
   }
 
   public async init() {
-    // await db.sequelize.sync();
     this.app.listen(this.port, () => {
       console.log(`Server:Running 🚀 @'http://localhost:${this.port}'`);
     });
-
-    //db.sequelize.sync()
-    //    .then()
   }
 }
 

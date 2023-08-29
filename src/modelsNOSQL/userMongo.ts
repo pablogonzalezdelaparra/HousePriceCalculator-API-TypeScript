@@ -1,55 +1,37 @@
-import mongoose from 'mongoose';
-import { Schema ,Types, model } from "mongoose";
-
-import Joi from 'joi';
-import { PREFIX_TABLE } from '../config';
+import { Schema, model } from "mongoose";
 
 export const UserRoles = {
-  CREATOR: 'creator',
+  ADMIN: "admin",
+  USER: "user",
 };
 
 export interface IUser {
-    awsCognito: string;
-    name: string;
-    role: string;
-    email: string;
-    proposito: string;
-    meta: number;
-    total: number;
-  }
+  awsCognito: string;
+  name: string;
+  role: string;
+  email: string;
+}
 
-export const userSchema = new Schema<IUser>(
-  {
-    awsCognito: {
-      type: String,
-      required: false,
-    },
-    name: {
-      type: String,
-      required: false,
-    },
-    role: {
-      type: String,
-      required: false,
-      default: UserRoles.CREATOR,
-    },
-    email: {
-      type: String,
-      required: false,
-      unique: true,
-    },
-    proposito: String,
-    meta: Number,
-    total: {
-      type: Number,
-      default: 0,
-      required: false
-    },
-  }
-);
+export const userSchema = new Schema<IUser>({
+  awsCognito: {
+    type: String,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  role: {
+    type: String,
+    required: false,
+    default: UserRoles.USER,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+});
 
-userSchema.index({ email: 1 }, { name: 'EmailIndex' });
-userSchema.index({ awsCognito: 1 }, { name: 'awsCognitoIndex' });
-
-export const UserModel = model<IUser>('User', userSchema);
+export const UserModel = model<IUser>("User", userSchema);
 export default IUser;
