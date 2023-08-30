@@ -8,9 +8,6 @@ class UserController extends AbstractController {
   protected validateBody(type: any) {
     throw new Error("Method not implemented.");
   }
-  // protected initRoutes(): void {
-  //     throw new Error("Method not implemented.");
-  // }
 
   // Singleton
   private static instance: UserController;

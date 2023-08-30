@@ -75,6 +75,32 @@ class CognitoService {
     return await this.cognitoIdentity.confirmSignUp(params).promise();
   }
 
+  //Recuperación de contraseña
+  public async forgotPassword(email: string) {
+    const params = {
+      ClientId: this.clientId,
+      Username: email,
+      SecretHash: this.hashSecret(email),
+    };
+    return await this.cognitoIdentity.forgotPassword(params).promise();
+  }
+
+  //Cambiar contraseña
+  public async confirmForgotPassword(
+    email: string,
+    code: string,
+    newPassword: string
+  ) {
+    const params = {
+      ClientId: this.clientId,
+      ConfirmationCode: code,
+      Username: email,
+      SecretHash: this.hashSecret(email),
+      Password: newPassword,
+    };
+    return await this.cognitoIdentity.confirmForgotPassword(params).promise();
+  }
+
   // Funcion para comunicarnos a través de cognito
   private hashSecret(username: string): string {
     return crypto

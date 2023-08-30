@@ -24,6 +24,8 @@ class AuthenticationController extends AbstractController {
     this.router.post("/signup", this.signup.bind(this));
     this.router.post("/verify", this.verify.bind(this));
     this.router.post("/signin", this.signin.bind(this));
+    this.router.post("/forgotPassword", this.forgotPassword.bind(this));
+    this.router.post("/confirmForgotPassword", this.changePassword.bind(this));
   }
 
   private async signin(req: Request, res: Response) {
@@ -39,7 +41,7 @@ class AuthenticationController extends AbstractController {
     const { email, code } = req.body;
     try {
       await this.cognitoService.verifyUser(email, code);
-      return res.status(200).send({ message: "Correct verification" });
+      return res.status(200).send({ message: "User verified succesfully!" });
     } catch (error: any) {
       res.status(500).send({ code: error.code, message: error.message });
     }
@@ -68,7 +70,31 @@ class AuthenticationController extends AbstractController {
       if (!created_user) {
         throw "Failed to create user in MongoDB!";
       }
-      res.status(201).send({ message: "User signedup" });
+      res.status(201).send({ message: "User signedup succesfully!" });
+    } catch (error: any) {
+      res.status(500).send({ code: error.code, message: error.message });
+    }
+  }
+
+  private async forgotPassword(req: Request, res: Response) {
+    const { email } = req.body;
+    try {
+      const forgotten_code = await this.cognitoService.forgotPassword(email);
+      res.status(200).send({ message: forgotten_code });
+    } catch (error: any) {
+      res.status(500).send({ code: error.code, message: error.message });
+    }
+  }
+
+  private async changePassword(req: Request, res: Response) {
+    const { email, code, newPassword } = req.body;
+    try {
+      const change = await this.cognitoService.confirmForgotPassword(
+        email,
+        code,
+        newPassword
+      );
+      res.status(200).send({ message: "Password was changed succesfully!" });
     } catch (error: any) {
       res.status(500).send({ code: error.code, message: error.message });
     }
