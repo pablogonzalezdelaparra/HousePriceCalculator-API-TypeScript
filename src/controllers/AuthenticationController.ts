@@ -38,17 +38,17 @@ class AuthenticationController extends AbstractController {
     }
   }
   private async verify(req: Request, res: Response) {
-    const { email, code } = req.body;
+    const { email, verifyCode } = req.body;
     try {
-      await this.cognitoService.verifyUser(email, code);
-      return res.status(200).send({ message: "User verified succesfully!" });
+      await this.cognitoService.verifyUser(email, verifyCode);
+      return res.status(200).send({ message: "ok" });
     } catch (error: any) {
       res.status(500).send({ code: error.code, message: error.message });
     }
   }
 
   private async signup(req: Request, res: Response) {
-    const { email, password, name } = req.body;
+    const { email, password, name, lastName } = req.body;
     try {
       // Crear el usuario de cognito
       const user = await this.cognitoService.signUpUser(email, password, [
@@ -62,6 +62,7 @@ class AuthenticationController extends AbstractController {
         await this._model.create(
           new UserModel({
             name: name,
+            lastName: lastName,
             email: email,
             awsCognito: user.UserSub,
           })
@@ -70,7 +71,7 @@ class AuthenticationController extends AbstractController {
       if (!created_user) {
         throw "Failed to create user in MongoDB!";
       }
-      res.status(201).send({ message: "User signedup succesfully!" });
+      res.status(201).send({ message: "ok" });
     } catch (error: any) {
       res.status(500).send({ code: error.code, message: error.message });
     }

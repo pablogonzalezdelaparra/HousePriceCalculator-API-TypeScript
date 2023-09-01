@@ -8,6 +8,7 @@ export const UserRoles = {
 export interface IUser {
   awsCognito: string;
   name: string;
+  lastName: string;
   role: string;
   email: string;
 }
@@ -18,6 +19,10 @@ export const userSchema = new Schema<IUser>({
     required: true,
   },
   name: {
+    type: String,
+    required: true,
+  },
+  lastName: {
     type: String,
     required: true,
   },

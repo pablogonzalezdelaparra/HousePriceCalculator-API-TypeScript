@@ -4,6 +4,14 @@ import jwt from "jsonwebtoken";
 import jwkToPem from "jwk-to-pem";
 import fetch from "node-fetch";
 
+declare global {
+  namespace Express {
+    interface Request {
+      aws_cognito?: string;
+    }
+  }
+}
+
 const pems: { [key: string]: string } = {};
 class AuthMiddleware {
   private poolRegion = AWS_REGION;
@@ -24,52 +32,44 @@ class AuthMiddleware {
   }
 
   public verifyToken(req: Request, res: Response, next: NextFunction) {
-    if (req.headers.authorization) {
-      const token = req.headers.authorization.replace("Bearer ", "");
-      const decodedJWT: any = jwt.decode(token, { complete: true });
-      if (!decodedJWT) {
-        return res
-          .status(401)
-          .send({
-            code: "InvalidTokenException",
-            message: "The token is no valid",
-          });
-      }
-      const kid = decodedJWT.header.kid;
-      if (kid !== undefined) {
-        if (Object.keys(pems).includes(kid)) {
-          console.log("Verificado");
-          //return res.status(401).end();
+    try {
+      if (req.headers.authorization) {
+        const token = req.headers.authorization.replace("Bearer ", "");
+        const decodedJWT: any = jwt.decode(token, { complete: true });
+        if (!decodedJWT) {
+          throw "Invalid token";
         }
-        const pem = pems[kid];
-        jwt.verify(token, pem, { algorithms: ["RS256"] }, function (err: any) {
-          if (err) {
-            return res
-              .status(401)
-              .send({
-                code: "InvalidTokenException",
-                message: "The token is no valid",
-              });
+        const kid = decodedJWT.header.kid;
+        if (kid !== undefined) {
+          if (Object.keys(pems).includes(kid)) {
+            // console.log("Verificado");
+            //return res.status(401).end();
           }
-        });
-        req.user = decodedJWT.payload.username;
-        req.token = token;
-        next();
+          const pem = pems[kid];
+          jwt.verify(
+            token,
+            pem,
+            { algorithms: ["RS256"] },
+            function (err: any) {
+              if (err) {
+                throw "Invalid token";
+              }
+            }
+          );
+          req.aws_cognito = decodedJWT.payload.username;
+          req.token = token;
+          next();
+        } else {
+          throw "Invalid token";
+        }
       } else {
-        return res
-          .status(401)
-          .send({
-            code: "InvalidTokenException",
-            message: "The token is no valid",
-          });
+        throw "Token not found";
       }
-    } else {
-      res
-        .status(401)
-        .send({
-          code: "NoTokenFound",
-          message: "The token is not present in the request",
-        });
+    } catch (error) {
+      res.status(400).send({
+        status: "Fail",
+        message: error,
+      });
     }
   }
 
