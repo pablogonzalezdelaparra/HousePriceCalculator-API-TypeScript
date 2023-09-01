@@ -24,7 +24,7 @@ export default class PermissionMiddleware {
   ): Promise<void> {
     try {
       const user: HydratedDocument<IUser> | null = await UserModel.findOne({
-        awsCognito: req.user,
+        awsCognito: req.aws_cognito,
       });
 
       if (!user) {

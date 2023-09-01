@@ -11,6 +11,7 @@ export interface IUser {
   lastName: string;
   role: string;
   email: string;
+  comments: string[];
 }
 
 export const userSchema = new Schema<IUser>({
@@ -36,6 +37,11 @@ export const userSchema = new Schema<IUser>({
     required: true,
     unique: true,
   },
+  comments: [
+    {
+      type: String
+    },
+  ],
 });
 
 export const UserModel = model<IUser>("User", userSchema);

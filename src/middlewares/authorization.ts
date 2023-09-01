@@ -4,14 +4,6 @@ import jwt from "jsonwebtoken";
 import jwkToPem from "jwk-to-pem";
 import fetch from "node-fetch";
 
-declare global {
-  namespace Express {
-    interface Request {
-      aws_cognito?: string;
-    }
-  }
-}
-
 const pems: { [key: string]: string } = {};
 class AuthMiddleware {
   private poolRegion = AWS_REGION;
