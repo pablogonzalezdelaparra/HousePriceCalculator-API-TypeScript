@@ -41,7 +41,7 @@ class AuthenticationController extends AbstractController {
     const { email, verifyCode } = req.body;
     try {
       await this.cognitoService.verifyUser(email, verifyCode);
-      return res.status(200).send({ message: "ok" });
+      res.status(200).send({ message: "ok" });
     } catch (error: any) {
       res.status(500).send({ code: error.code, message: error.message });
     }
