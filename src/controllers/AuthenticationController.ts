@@ -24,7 +24,7 @@ class AuthenticationController extends AbstractController {
     this.router.post("/signup", this.signup.bind(this));
     this.router.post("/verify", this.verify.bind(this));
     this.router.post("/signin", this.signin.bind(this));
-    this.router.get("/getUser", this.getUser.bind(this));
+    this.router.post("/getUser", this.getUser.bind(this));
     this.router.post("/forgotPassword", this.forgotPassword.bind(this));
     this.router.post("/confirmForgotPassword", this.changePassword.bind(this));
   }
