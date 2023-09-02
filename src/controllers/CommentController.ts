@@ -49,7 +49,7 @@ class CommentController extends AbstractController {
         throw "Comment is empty";
       }
 
-      res.status(200).send({ message: "Comment created succesfully!" });
+      res.status(200).send({ message: "ok" });
     } catch (error: any) {
       res.status(500).send({ code: error.code, message: error.message });
     }
