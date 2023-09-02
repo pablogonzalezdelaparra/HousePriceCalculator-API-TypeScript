@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import AbstractController from "../controllers/AbstractController";
 // import db from '../models';
 import mongoose from "mongoose";
@@ -58,6 +58,20 @@ class Server {
   public async init() {
     this.app.listen(this.port, () => {
       console.log(`Server:Running 🚀 @'http://localhost:${this.port}'`);
+
+      // Log details of the requests
+      this.app.use((req: Request, res: Response, next: NextFunction) => {
+        console.log(`${req.method} ${req.path}`);
+        const startTime = Date.now();
+
+        res.on("finish", () => {
+          const duration = Date.now() - startTime;
+          console.log(
+            `${req.method} ${req.path} ${res.statusCode} ${duration}ms`
+          );
+        });
+        next();
+      });
     });
   }
 }
