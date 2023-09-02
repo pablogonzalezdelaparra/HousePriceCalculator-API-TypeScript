@@ -67,11 +67,13 @@ class CommentController extends AbstractController {
         throw "Failed to find comments";
       }
 
-      const commentObjects = users.map((user) => ({
+      const commentObjects = users.flatMap((user) =>
+      user.comments.map((comment) => ({
         name: user.name,
         lastName: user.lastName,
-        comment: user.comments,
-      }));
+        comment: comment,
+      }))
+    );    
 
       res.status(200).send({ commentObjects: commentObjects });
     } catch (error: any) {

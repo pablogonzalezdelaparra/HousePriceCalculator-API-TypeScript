@@ -24,8 +24,26 @@ class AuthenticationController extends AbstractController {
     this.router.post("/signup", this.signup.bind(this));
     this.router.post("/verify", this.verify.bind(this));
     this.router.post("/signin", this.signin.bind(this));
+    this.router.get("/getUser", this.getUser.bind(this));
     this.router.post("/forgotPassword", this.forgotPassword.bind(this));
     this.router.post("/confirmForgotPassword", this.changePassword.bind(this));
+  }
+
+  private async getUser(req: Request, res: Response) {
+    try {
+      const { email } = req.body;
+
+      const user: HydratedDocument<IUser> | null = await UserModel.findOne({
+        email: email,
+      });
+
+      if (!user) {
+        throw "Failed to find user";
+      }
+      res.status(200).send({ user });
+    } catch (error: any) {
+      res.status(500).send({ code: error.code, message: error.message });
+    }
   }
 
   private async signin(req: Request, res: Response) {
